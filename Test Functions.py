@@ -97,16 +97,32 @@ def valid(t=None):  # checks validity of time objects
         raise ValueError("Time is improperly formatted!")
 
 
-def vwap(lob=None):
+def vwap(lob=None): # volume-weighted average price
     _sum = sum([i['price']*i['size'] for i in lob])
     total = sum([i['size'] for i in lob])
     return _sum/total
 
 
-def pairwise_time(lob=None):
+def pairwise_time(lob=None):    # price delta per time delta
     times = [i['time'] for i in lob]
     prices = [i['price'] for i in lob]
-    return list(zip(tuple(zip(times[:], times[1:])), (tuple(zip(prices[:], prices[1:])))))
+    pairwise = list(zip(tuple(zip(times[:], times[1:])), (tuple(zip(prices[:], prices[1:])))))
+    delta = []
+    for i in pairwise:
+        inner = []
+        inner.append(i[0][1].minus(i[0][0]))
+        inner.append(i[1][1] - i[1][0])
+        delta.append(inner)
+    return delta
+
+
+def read(path=None):    # reads and parses from file
+    _file = open(path, 'r')
+
+
+def write(path=None):   # writes to file 
+    _file = open(path, 'w')
+
 
 def tests():
     # testing lob building
