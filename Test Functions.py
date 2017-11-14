@@ -117,11 +117,18 @@ def pairwise_time(lob=None):    # price delta per time delta
 
 
 def read(path=None):    # reads and parses from file
-    _file = open(path, 'r')
+    lob = []
+    app = open(path, 'r')
+    for j in app:
+        i = j.split('|')
+        lob.append({'type': (i[1]), 'price': float(i[2]), 'size': float(i[3]), 'status': (i[4]), 'time': Time(str(i[5]))})
+    return lob
 
 
-def write(path=None):   # writes to file 
-    _file = open(path, 'w')
+def write(path=None):   # writes to file
+    with open(path, 'w') as _file:
+        for i in _file:
+            pass
 
 
 def tests():
@@ -158,6 +165,9 @@ def tests():
         valid(c)
     except ValueError:
         print("caught")
+
+    # test read/write
+    print(read('Python Files/FD/test_file.lob'))
 
 
 if __name__ == "__main__":
