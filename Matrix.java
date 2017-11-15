@@ -2,40 +2,63 @@ public class Matrix {
 	private static double[][] values;
 	
 	public Matrix() {
+		// Simply for ease of initialization
 		values = null;
 	}
 	
 	public Matrix(int rows, int columns) {
+		// Initializes to 0s
 		values = new double[rows][columns];
 	}
 		
 	public Matrix(double[][] inputs) {
-		int max = 1;
-		// Finding max column length
-		for (int i = 0; i < inputs.length; i++) {
-			if (inputs[i].length > max) {
-				max = inputs[i].length;
-			}
-		}
-		values = new double[inputs.length][max];
-		// Appending 0s to empty entries
-		for (int i = 0; i < inputs.length; i++) {
-			for (int j = 0; j < max; j++) {
-				if (inputs[i].length < max) {
-					values[i][j] = 0;
-				} else {
-					values[i][j] = inputs[i][j];
-				}
-			}
-		}
+		// Initializes a 2D array
+		this.set(inputs);
+	}
+	
+	public void set(double[][] inputs) {
+		values = inputs;
 	}
 	
 	public void insert(double target, int row, int column) {
+		// Indexes by 1; standard matrix convention
 		values[row - 1][column - 1] = target;
 	}
 	
 	public void append(double[] new_row) {
-		
+		// Adds a new row
+		// Accounts for dimension mismatches
+		if (new_row.length <= values.length) {
+			double[][] temp = new double[values.length + 1][values[0].length];
+			for (int i = 0; i < values.length; i++) {
+				for (int j = 0; j < values[0].length; j++) {
+					temp[i][j] = values[i][j];
+				}
+			}
+			// Supplants empty dimensions with 0s
+			for (int i = 0; i < temp.length; i++) {
+				if (i < new_row.length) {
+					temp[temp.length - 1][i] = new_row[i];
+				}
+			}
+			values = temp;
+		} else {
+			int max = new_row.length;
+			double[][] temp = new double[values.length + 1][max];
+			// Extending original matrix
+			for (int i = 0; i < values.length; i++) {
+				for (int j = 0; j < max; j++) {
+					if (j < max) {
+						temp[i][j] = values[i][j];
+					}
+				}
+			}
+			// Adding row as usual
+			for (int i = 0; i < temp.length; i++) {
+				temp[temp.length - 1][i] = new_row[i];
+			}
+			values = temp;
+		}
 	}
 	
 	public void remove(int row, int column) {
@@ -70,15 +93,33 @@ public class Matrix {
 		}
 	}
 	
-	public int[][][] search(double target) {
-		return null;
+	public int count(double target) {
+		int counter = 0;
+		for (int i = 0; i < values.length; i++) {
+			for (int j = 0; j < values[0].length; j++) {
+				if (values[i][j] == target) {
+					counter++;
+				}
+			}
+		}
+		return counter;
 	}
 	
 	public Matrix add(Matrix target) {
+		try {
+			
+		} catch (Exception e) {
+			
+		}
 		return null;
 	}
 	
 	public Matrix times(Matrix target) {
+		try {
+			
+		} catch (Exception e) {
+			
+		}
 		return null;
 	}
 	
@@ -104,5 +145,13 @@ public class Matrix {
 	
 	public Matrix reduce() {
 		return null;
+	}
+	
+	private static void test() {
+		
+	}
+	
+	public static void main(String[] args) {
+		test();
 	}
 }
