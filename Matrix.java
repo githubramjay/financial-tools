@@ -1,9 +1,9 @@
 public class Matrix {
-	private static double[][] values;
+	private double[][] values;
 	
 	public Matrix() {
 		// Simply for ease of initialization
-		values = null;
+		values = new double[1][1];
 	}
 	
 	public Matrix(int rows, int columns) {
@@ -190,16 +190,22 @@ public class Matrix {
 	}
 	
 	private static void tests() {
-		// Testing matrix formation
+		// Testing matrix constructors
 		Matrix a = new Matrix();
 		Matrix b = new Matrix(2, 3);
+		Matrix c = new Matrix(new double[5][6]);
+		
+		// Testing matrix manipulations
 		b.put(2, 1, 1);
 		b.put(10.5, 1, 2);
 		b.put(5.2, 1, 3);
 		b.put(2, 2, 1);
 		b.put(72, 2, 2);
 		b.put(12.424, 2, 3);
+		System.out.println(a);
 		System.out.println(b);
+		System.out.println(c);
+		
 	}
 	
 	public static void main(String[] args) {
