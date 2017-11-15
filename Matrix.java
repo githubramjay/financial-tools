@@ -16,11 +16,39 @@ public class Matrix {
 		this.set(inputs);
 	}
 	
+	public String toString() {
+		String s = "[";
+		String row = "[";
+		for (int i = 0; i < this.rows(); i++) {
+			for (int j = 0; j < this.columns(); j++) {
+				row += values[i][j];
+				row += " ";
+			}
+			row = row.substring(0, row.length() - 1);
+			row += "]";
+			s += row;
+			row = "[";
+			s += "\n";
+		}
+		return s.substring(0, s.length() - 1) + "]";
+	}
+	
+	public int rows() {
+		// Gets rows
+		return values.length;
+	}
+	
+	public int columns() {
+		// Gets columns
+		return values[0].length;
+	}
+	
 	public void set(double[][] inputs) {
+		// Sets internal 2D array
 		values = inputs;
 	}
 	
-	public void insert(double target, int row, int column) {
+	public void put(double target, int row, int column) {
 		// Indexes by 1; standard matrix convention
 		values[row - 1][column - 1] = target;
 	}
@@ -62,18 +90,22 @@ public class Matrix {
 	}
 	
 	public void remove(int row, int column) {
+		// Supplants value at row/column with 0
 		values[row - 1][column - 1] = 0;
 	}
 	
 	public double get(int row, int column) {
+		// Retrieves value at row/column
 		return values[row - 1][column - 1];
 	}
 	
 	public void empty() {
+		// Supplants all values with 0
 		values = new double[values.length][values[0].length];
 	}
 	
 	public void swap_row(int row_a, int row_b) {
+		// Switches two rows
 		row_a -= 1;
 		row_b -= 1;
 		double[] temp = values[row_a];
@@ -84,6 +116,7 @@ public class Matrix {
 	}
 	
 	public void swap_column(int column_a, int column_b) {
+		// Switches two columns
 		column_a -= 1;
 		column_b -= 1;
 		double[] temp = values[column_a];
@@ -94,6 +127,7 @@ public class Matrix {
 	}
 	
 	public int count(double target) {
+		// Number of times some value appears
 		int counter = 0;
 		for (int i = 0; i < values.length; i++) {
 			for (int j = 0; j < values[0].length; j++) {
@@ -106,21 +140,29 @@ public class Matrix {
 	}
 	
 	public Matrix add(Matrix target) {
+		// Adds two matrices together
+		Matrix m = new Matrix();
 		try {
-			
+			for (int i = 0; i < values.length; i++) {
+				for (int j = 0; j < values[0].length; j++) {
+					m.put(values[i][j] + target.get(i + 1, j + 1), i + 1, j + 1);
+				}
+			}
 		} catch (Exception e) {
-			
+			System.out.println("Dimension mismatch!");
 		}
-		return null;
+		return m;
 	}
 	
 	public Matrix times(Matrix target) {
+		// Multiplies two matrices
+		Matrix m = new Matrix(values[0].length, target.rows());
 		try {
 			
 		} catch (Exception e) {
-			
+			System.out.println("Dimension mismatch!");
 		}
-		return null;
+		return m;
 	}
 	
 	public Matrix invert() {
@@ -147,11 +189,20 @@ public class Matrix {
 		return null;
 	}
 	
-	private static void test() {
-		
+	private static void tests() {
+		// Testing matrix formation
+		Matrix a = new Matrix();
+		Matrix b = new Matrix(2, 3);
+		b.put(2, 1, 1);
+		b.put(10.5, 1, 2);
+		b.put(5.2, 1, 3);
+		b.put(2, 2, 1);
+		b.put(72, 2, 2);
+		b.put(12.424, 2, 3);
+		System.out.println(b);
 	}
 	
 	public static void main(String[] args) {
-		test();
+		tests();
 	}
 }
