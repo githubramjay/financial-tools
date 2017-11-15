@@ -122,13 +122,15 @@ def read(path=None):    # reads and parses from file
     for j in app:
         i = j.split('|')
         lob.append({'type': (i[1]), 'price': float(i[2]), 'size': float(i[3]), 'status': (i[4]), 'time': Time(str(i[5]))})
+    app.close()
     return lob
 
 
-def write(path=None):   # writes to file
-    with open(path, 'w') as _file:
-        for i in _file:
-            pass
+def write(path=None, lob=None):   # writes to file
+    _file = open(path, 'a')
+    for i in lob:
+        _file.write('|' + i['type'] + '|' + str(i['price']) + '|' + str(i['size']) + '|' + i['status'] + '|' + str(i['time']) + '|\n')
+    _file.close()
 
 
 def tests():
@@ -168,6 +170,8 @@ def tests():
 
     # test read/write
     print(read('Python Files/FD/test_file.lob'))
+    write('Python Files/FD/test_file2.lob', order_book)
+    print(read('Python Files/FD/test_file2.lob'))
 
 
 if __name__ == "__main__":
