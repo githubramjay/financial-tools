@@ -104,26 +104,32 @@ public class Matrix {
 		values = new double[values.length][values[0].length];
 	}
 	
-	public void swap_row(int row_a, int row_b) {
+	public Matrix swap_row(int row_a, int row_b) {
 		// Switches two rows
 		row_a -= 1;
 		row_b -= 1;
-		double[] temp = values[row_a];
-		for (int i = 0; i < values.length; i++) {
+		double[] temp = values[row_a].clone();
+		for (int i = 0; i < values[0].length; i++) {
 			values[row_a][i] = values[row_b][i];
 			values[row_b][i] = temp[i];
 		}
+		return this;
 	}
 	
-	public void swap_column(int column_a, int column_b) {
+	public Matrix swap_column(int column_a, int column_b) {
 		// Switches two columns
 		column_a -= 1;
 		column_b -= 1;
-		double[] temp = values[column_a];
+		System.out.println(this);
+		double[] temp = new double[values.length];
+		for (int i = 0; i < temp.length; i++) {
+			temp[i] = values[i][column_a];
+		}
 		for (int i = 0; i < values.length; i++) {
 			values[i][column_a] = values[i][column_b];
 			values[i][column_b] = temp[i];
 		}
+		return this;
 	}
 	
 	public int count(double target) {
@@ -196,6 +202,7 @@ public class Matrix {
 		Matrix c = new Matrix(new double[5][6]);
 		
 		// Testing matrix manipulations
+		c.put(123, 5, 6);
 		b.put(2, 1, 1);
 		b.put(10.5, 1, 2);
 		b.put(5.2, 1, 3);
@@ -205,7 +212,17 @@ public class Matrix {
 		System.out.println(a);
 		System.out.println(b);
 		System.out.println(c);
-		
+		b.remove(2, 2);
+		System.out.println(b);
+		System.out.println(c);
+		System.out.println(c.get(5, 6));
+		c.empty();
+		System.out.println(c.get(5, 6));
+		System.out.println(b);
+		System.out.println(b.swap_row(1, 2));
+		b.remove(2, 3);
+		b.swap_column(3, 2);
+		System.out.println(b);
 	}
 	
 	public static void main(String[] args) {
