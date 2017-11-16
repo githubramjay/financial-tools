@@ -145,19 +145,34 @@ public class Matrix {
 		return counter;
 	}
 	
-	public Matrix add(Matrix target) {
+	public Matrix plus(Matrix target) {
 		// Adds two matrices together
-		Matrix m = new Matrix();
+		Matrix m = new Matrix(this.rows(), this.columns());
 		try {
-			for (int i = 0; i < values.length; i++) {
-				for (int j = 0; j < values[0].length; j++) {
-					m.put(values[i][j] + target.get(i + 1, j + 1), i + 1, j + 1);
+			for (int i = 1; i <= this.rows(); i++) {
+				for (int j = 1; j <= this.columns(); j++) {
+					m.put(this.get(i, j) + target.get(i, j), i, j);
 				}
 			}
 		} catch (Exception e) {
 			System.out.println("Dimension mismatch!");
 		}
 		return m;
+	}
+	
+	public Matrix minus(Matrix target) {
+		// Subtracts two matrices
+		Matrix m = new Matrix(this.rows(), this.columns());
+		try {
+			for (int i = 1; i <= this.rows(); i++) {
+				for (int j = 1; j <= this.columns(); j++) {
+					m.put(this.get(i, j) - target.get(i, j), i, j);
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Dimension mismatch!");
+		}
+		return m;	
 	}
 	
 	public Matrix times(Matrix target) {
@@ -197,11 +212,16 @@ public class Matrix {
 	
 	private static void tests() {
 		// Testing matrix constructors
+		System.out.println("...Testing Constructors...");
 		Matrix a = new Matrix();
 		Matrix b = new Matrix(2, 3);
 		Matrix c = new Matrix(new double[5][6]);
+		System.out.println(a);
+		System.out.println(b);
+		System.out.println(c);
 		
 		// Testing matrix manipulations
+		System.out.println("...Testing Manipulations...");
 		c.put(123, 5, 6);
 		b.put(2, 1, 1);
 		b.put(10.5, 1, 2);
@@ -223,6 +243,24 @@ public class Matrix {
 		b.remove(2, 3);
 		b.swap_column(3, 2);
 		System.out.println(b);
+		System.out.println(b.count(0));
+		
+		// Testing matrix functions
+		System.out.println("...Testing Functions...");
+		a = new Matrix(2, 2);
+		b = new Matrix(2, 2);
+		for (int i = 1; i <= 2; i++) {
+			for (int j = 1; j <= 2; j++) {
+				a.put((int) (Math.random() * 10), i, j);
+				b.put((int) (Math.random() * 10), i, j);
+			}
+		}
+		System.out.println(a);
+		System.out.println(b);
+		/*System.out.println(a.plus(b));
+		System.out.println(a.minus(b));*/
+		System.out.println(a.times(b));
+		
 	}
 	
 	public static void main(String[] args) {
