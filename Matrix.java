@@ -1,7 +1,10 @@
 // R. Jayaraman
+// Full-fledged Matrix functionality in Java
+// Shorthand method calls + Descriptive method calls
 
 public class Matrix {
 	private double[][] values;
+	private static final double TOLERANCE = 1e-10;
 	
 	public Matrix() {
 		// Simply for ease of initialization
@@ -52,7 +55,7 @@ public class Matrix {
 		return m;
 	}
 	
-	public static Matrix toMatrix(Object target) throws Exception {
+	public static Matrix to_matrix(Object target) throws Exception {
 		// Parses object into matrix form
 		Matrix m;
 		if (target instanceof double[]) {
@@ -68,6 +71,31 @@ public class Matrix {
 			throw new Exception("Incompatible data types!");
 		}
 		return m;
+	}
+	
+	public static double to_array(Matrix target) {
+		double[] vector;
+		double[][] array;
+		if (target.rows() == 1) {
+			vector = new double[target.columns()];
+			for (int i = 1; i <= target.columns(); i++) {
+				vector[i - 1] = target.get(1, i);
+			}
+		} else if (target.columns() == 1) {
+			vector = new double[target.rows()];
+			for (int i = 1; i <= target.rows(); i++) {
+				vector[i - 1] = target.get(i, 1);
+			}
+			return vector;
+		} else {
+			array = new double[target.rows()][target.columns()];
+			for (int i = 1; i <= target.rows(); i++) {
+				for (int j = 1; j <= target.columns(); j++) {
+					array[i - 1][j - 1] = target.get(i, j);
+				}
+			}
+			return array;
+		}
 	}
 	
 	public static boolean is_upper_triangular(Matrix target) {
@@ -202,13 +230,13 @@ public class Matrix {
 		}
 	}
 	
-	public boolean remove_row(int row) {
-		// Supplants a row with 0s
+	public boolean delete_row(int row) {
+		// Deletes row
 		return false;
 	}
 	
-	public boolean remove_column(int column) {
-		// Supplants a column with 0s
+	public boolean delete_column(int column) {
+		// Deletes column
 		return false;
 	}
 	
@@ -361,8 +389,48 @@ public class Matrix {
 		return null;
 	}
 	
-	public Matrix reduce() {
-		return null;
+	public double[] gaussian_elimination(double[] vector) {
+		// Solves a system of linear equations given an array
+		// Returns a matrix
+		double[][] copy = values.clone();
+		int n = vector.length;
+        for (int p = 0; p < n; p++) {
+            // find pivot row and swap
+            int max = p;
+            for (int i = p + 1; i < n; i++) {
+                if (Math.abs(copy[i][p]) > Math.abs(copy[max][p])) {
+                    max = i;
+                }
+            }
+            double[] temp = copy[p]; 
+            copy[p] = copy[max]; 
+            copy[max] = temp;
+            double t = vector[p];
+            vector[p] = vector[max];
+            vector[max] = t;
+            // singular or nearly singular
+            if (Math.abs(copy[p][p]) <= Matrix.TOLERANCE) {
+                throw new ArithmeticException("Matrix is singular or nearly singular");
+            }
+            // pivot within A and b
+            for (int i = p + 1; i < n; i++) {
+                double alpha = copy[i][p] / copy[p][p];
+                vector[i] -= alpha * vector[p];
+                for (int j = p; j < n; j++) {
+                    copy[i][j] -= alpha * copy[p][j];
+                }
+            }
+        }
+        // back substitution
+        double[] x = new double[n];
+        for (int i = n - 1; i >= 0; i--) {
+            double sum = 0.0;
+            for (int j = i + 1; j < n; j++) {
+                sum += copy[i][j] * x[j];
+            }
+            x[i] = (vector[i] - sum) / copy[i][i];
+        }
+        return x;
 	}
 	
 	private static void constructor_tests() {
@@ -402,6 +470,7 @@ public class Matrix {
 		b.swap_column(3, 2);
 		System.out.println(b);
 		System.out.println(b.count(0));	
+		System.out.println(b.clone());
 	}
 	
 	private static void function_tests() {
@@ -423,10 +492,10 @@ public class Matrix {
 		double[] row = {1, 1, 2, 3, 5};
 		double[][] dummy = {{1, 2}, {3, 4}};
 		try {
-			System.out.println(Matrix.toMatrix(row));
-			System.out.println(Matrix.toMatrix(dummy));
-			System.out.println(Matrix.toMatrix(row).get(1, 2));
-			System.out.println(Matrix.toMatrix(dummy).get(2, 1));
+			System.out.println(Matrix.to_matrix(row));
+			System.out.println(Matrix.to_matrix(dummy));
+			System.out.println(Matrix.to_matrix(row).get(1, 2));
+			System.out.println(Matrix.to_matrix(dummy).get(2, 1));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
