@@ -39,6 +39,29 @@ public class Matrix {
 		return s.substring(0, s.length() - 1) + "]";
 	}
 	
+	public boolean equals(Object o) {
+		// Checks equivalence of matrices
+		if (o instanceof Matrix) {
+			Matrix m = (Matrix) o;
+			if (this.rows() != m.rows()) {
+				return false;
+			}
+			if (this.columns() != m.columns()) {
+				return false;
+			}
+			for (int i = 1; i <= this.rows(); i++) {
+				for (int j = 1; j <= this.columns(); j++) {
+					if (this.get(i, j) != m.get(i, j)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public Matrix clone() {
 		// Clones matrix 
 		Matrix m = new Matrix();
@@ -51,6 +74,15 @@ public class Matrix {
 		Matrix m = new Matrix(dimension, dimension);
 		for (int i = 1; i <= m.rows(); i++) {
 			m.put(1, i, i);
+		}
+		return m;
+	}
+	
+	public static Matrix unit(int dimension) {
+		// Returns unit matrix of dimension m
+		Matrix m = new Matrix(1, dimension);
+		for (int i = 1; i <= m.columns(); i++) {
+			m.put(1, 1, i);
 		}
 		return m;
 	}
@@ -247,12 +279,20 @@ public class Matrix {
 	
 	public Matrix get_row(int row) {
 		// Returns a particular row
-		return null;
+		Matrix m = new Matrix(1, this.columns());
+		for (int i = 1; i <= this.columns(); i++) {
+			m.put(this.get(1, i), 1, i);
+		}
+		return m;
 	}
 	
 	public Matrix get_column(int column) {
 		// Returns a particular column
-		return null;
+		Matrix m = new Matrix(this.rows(), 1);
+		for (int i = 1; i <= this.rows(); i++) {
+			m.put(this.get(i, 1), i, 1);
+		}
+		return m;
 	}
 	
 	public boolean empty() {
@@ -352,20 +392,60 @@ public class Matrix {
 		return m;	
 	}
 	
-	public Matrix times(Matrix target) {
+	public Matrix times(Matrix target) throws Exception {
 		// Multiplies two matrices
-		Matrix m = new Matrix(values[0].length, target.rows());
+		Matrix m = new Matrix();
+		double[][] entries = new double[this.rows()][target.columns()];
+		if (this.columns() != target.rows()) {
+			throw new Exception("Dimension mismatch!");
+		}
 		try {
-			
+			for (int i = 0; i < this.rows(); i++) {
+				for (int j = 0; j < target.columns(); j++) {
+					for (int k = 0; k < this.columns(); k++) {
+						entries[i][j] = entries[i][j] + values[i][k] * target.get(k + 1, j + 1);
+					}
+				}
+			}
+			m.set(entries);
 		} catch (Exception e) {
-			System.out.println("Dimension mismatch!");
+			System.out.println("Iteration error!");
+		}
+		return m;
+	}
+	
+	public Matrix times(double target) {
+		// Multiplies matrix by constant
+		Matrix m = new Matrix(this.rows(), this.columns());
+		try {
+			for (int i = 1; i <= this.rows(); i++) {
+				for (int j = 1; j <= this.columns(); j++) {
+					m.put(this.get(i, j) * target, i, j);
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 		return m;
 	}
 	
 	public Matrix to_the(int power) {
 		// Returns matrix to the power of some integer constant
-		return null;
+		// Assumes power is a whole number
+		try {
+			if (power == 0) {
+				return identity(this.rows());
+			} else {
+				Matrix m = this.clone();
+				for (int i = 1; i < power; i++) {
+					m = this.times(m);
+				}
+				return m;
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return this;
 	}
 	
 	public Matrix invert() throws Exception {
@@ -373,11 +453,11 @@ public class Matrix {
 		return null;
 	}
 	
-	public Matrix cholesky_factorization() {
+	public static Matrix cholesky_factorization(Matrix target) {
 		return null;
 	}
 	
-	public Matrix[] LU_Decomposition() {
+	public static Matrix[] LU_Decomposition(Matrix target) {
 		return null;
 	}
 	
@@ -386,12 +466,19 @@ public class Matrix {
 	}
 	
 	public Matrix transpose() {
-		return null;
+		// Transposes the matrix
+		Matrix m = new Matrix(this.columns(), this.rows());
+		for (int i = 1; i <= this.rows(); i++) {
+			for (int j = 1; j <= this.columns(); j++) {
+				m.put(this.get(i, j), j, i);
+			}
+		}
+		return m;
 	}
 	
-	public double[] gaussian_elimination(double[] vector) {
+	public double[] gaussian_elimination(double[] vector) throws Exception {
 		// Solves a system of linear equations given an array
-		// Returns a matrix
+		// Returns an array
 		double[][] copy = values.clone();
 		int n = vector.length;
         for (int p = 0; p < n; p++) {
@@ -410,7 +497,7 @@ public class Matrix {
             vector[max] = t;
             // singular or nearly singular
             if (Math.abs(copy[p][p]) <= Matrix.TOLERANCE) {
-                throw new ArithmeticException("Matrix is singular or nearly singular");
+                throw new Exception("Matrix is singular!");
             }
             // pivot within A and b
             for (int i = p + 1; i < n; i++) {
@@ -471,6 +558,22 @@ public class Matrix {
 		System.out.println(b);
 		System.out.println(b.count(0));	
 		System.out.println(b.clone());
+		System.out.println(b.transpose());
+		System.out.println(b.transpose().transpose().equals(b));
+		try {
+			double[][] entries = new double[2][2];
+			for (int i = 0; i < 2; i++) {
+				for (int j = 0; j < 2; j++) {
+					entries[i][j] = i*j-j+1*i;
+				}
+			}
+			b.set(entries);		
+			System.out.println(b.times(b).equals(b.to_the(2)));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		double[] row1 = {1, 2, 3, 4, 5, 6};
+		double[] row2 = {19, 20};
 	}
 	
 	private static void function_tests() {
@@ -488,7 +591,9 @@ public class Matrix {
 		System.out.println(b);
 		System.out.println(a.plus(b));
 		System.out.println(a.minus(b));
-		System.out.println(a.times(b));
+		try {
+			System.out.println(a.times(b));
+		} catch (Exception e) {}
 		double[] row = {1, 1, 2, 3, 5};
 		double[][] dummy = {{1, 2}, {3, 4}};
 		try {
@@ -505,7 +610,7 @@ public class Matrix {
 	
 	public static void main(String[] args) {
 		// constructor_tests();
-		// manipulation_tests();
-		function_tests();
+		manipulation_tests();
+		// function_tests();
 	}
 }
