@@ -4,7 +4,7 @@
 
 public class Matrix {
 	private double[][] values;
-	private static final double TOLERANCE = 1e-10;
+	protected static final double TOLERANCE = 1e-10;
 	
 	public Matrix() {
 		// Simply for ease of initialization
@@ -112,14 +112,14 @@ public class Matrix {
 				double[] a = new double[vector.columns()];
 				for (int i = 1; i <= vector.columns(); i++) {
 					a[i - 1] = vector.get(1, i);
-					return a;
 				}
+				return a;
 			} else {
 				double[] a = new double[vector.rows()];
 				for (int i = 1; i <= vector.rows(); i++) {
 					a[i - 1] = vector.get(i, 1);
-					return a;
 				}
+				return a;
 			}
 		} catch (Exception e) {
 			System.out.println(e);
@@ -472,20 +472,22 @@ public class Matrix {
 	
 	public Matrix[] horizontal_slice(int[] rows) {
 		// Splits a matrix along some horizontal(s)
-		
+		return new Matrix[1];
 	}
 	
 	public Matrix[] vertical_slice(int[] columns) {
 		// Splits a matrix along some vertical(s)
-		
+		return new Matrix[1];
 	}
 		
-	public Matrix horizontal_stitch(Matrix target) {
+	public static Matrix horizontal_stitch(Matrix target) {
 		// Joins two matrices over the horizontal
+		return new Matrix();
 	}
 	
-	public Matrix vertical_stitch(Matrix target) {
+	public static Matrix vertical_stitch(Matrix target) {
 		// Joins two matrices over the vertical
+		return new Matrix();
 	}
 	
 	public static Matrix cholesky_factorization(Matrix target) {
@@ -616,6 +618,20 @@ public class Matrix {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		double[] array = {1, 6, 2, 7, 3, 7};
+		try {
+			Matrix m = Matrix.to_matrix(array);
+			System.out.println(m);
+			System.out.println(m.transpose());
+			System.out.println(m);
+			double[] array2 = Matrix.vector_to_array(m);
+			for (int i = 0; i < array2.length; i++) {
+				System.out.println(array2[i]);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -662,17 +678,8 @@ public class Matrix {
 	}
 	
 	public static void main(String[] args) {
-		// constructor_tests();
-		// manipulation_tests();
-		// function_tests();
-		double[] array = {1, 6, 2, 7, 3, 7};
-		try {
-			Matrix m = Matrix.to_matrix(array);
-			System.out.println(m);
-			System.out.println(m.transpose());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		constructor_tests();
+		manipulation_tests();
+		function_tests();
 	}
 }
