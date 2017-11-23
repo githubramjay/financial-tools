@@ -105,29 +105,42 @@ public class Matrix {
 		return m;
 	}
 	
-	public static double to_array(Matrix target) {
-		double[] vector;
-		double[][] array;
-		if (target.rows() == 1) {
-			vector = new double[target.columns()];
-			for (int i = 1; i <= target.columns(); i++) {
-				vector[i - 1] = target.get(1, i);
-			}
-		} else if (target.columns() == 1) {
-			vector = new double[target.rows()];
-			for (int i = 1; i <= target.rows(); i++) {
-				vector[i - 1] = target.get(i, 1);
-			}
-			return vector;
-		} else {
-			array = new double[target.rows()][target.columns()];
-			for (int i = 1; i <= target.rows(); i++) {
-				for (int j = 1; j <= target.columns(); j++) {
-					array[i - 1][j - 1] = target.get(i, j);
+	public static double[] vector_to_array(Matrix vector) {
+		// Turns row/column vector to array
+		try {
+			if (vector.rows() == 1) {
+				double[] a = new double[vector.columns()];
+				for (int i = 1; i <= vector.columns(); i++) {
+					a[i - 1] = vector.get(1, i);
+					return a;
+				}
+			} else {
+				double[] a = new double[vector.rows()];
+				for (int i = 1; i <= vector.rows(); i++) {
+					a[i - 1] = vector.get(i, 1);
+					return a;
 				}
 			}
-			return array;
+		} catch (Exception e) {
+			System.out.println(e);
 		}
+		return new double[1];
+	}
+	
+	public static double[][] to_array(Matrix target) {
+		// Turns matrix to 2D array
+		try {
+			double[][] a = new double[target.rows()][target.columns()];
+			for (int i = 0; i < a.length; i++) {
+				for (int j = 0; j < a[0].length; j++) {
+					a[i][j] = target.get(i + 1, j + 1);
+				}
+			}
+			return a;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
 	}
 	
 	public static boolean is_upper_triangular(Matrix target) {
@@ -162,12 +175,26 @@ public class Matrix {
 	
 	public Matrix set_row(Matrix new_row, int row) {
 		// Supplants a row 
-		return null;
+		try {
+			for (int i = 1; i <= this.columns(); i++) {
+				this.put(new_row.get(1, i), row, i);
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return this;
 	}
 	
 	public Matrix set_column(Matrix new_column, int column) {
 		// Supplants a column
-		return null;
+		try {
+			for (int i = 1; i <= this.columns(); i++) {
+				this.put(new_column.get(i, 1), i, column);
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return this;
 	}
 	
 	public boolean put(double target, int row, int column) {
@@ -181,37 +208,27 @@ public class Matrix {
 		}
 	}
 	
-	public Matrix append_row(double[] new_row) {
+	public Matrix append_row(Matrix new_row) {
 		// Adds a new row
 		// Accounts for dimension mismatches
-		if (new_row.length <= values.length) {
-			double[][] temp = new double[values.length + 1][values[0].length];
-			for (int i = 0; i < values.length; i++) {
-				for (int j = 0; j < values[0].length; j++) {
-					temp[i][j] = values[i][j];
+		Matrix m = new Matrix();
+		try {
+			if (new_row.columns() <= this.columns()) {
+				m = new Matrix(this.rows() + 1, this.columns());
+			} else {
+				m = new Matrix(this.rows() + 1, new_row.columns());
+			}
+			for (int i = 1; i <= this.rows(); i++) {
+				for (int j = 1; j <= this.columns(); j++) {
+					m.put(this.get(i, j), i, j);
 				}
 			}
-			// Supplants empty dimensions with 0s
-			for (int i = 0; i < temp.length; i++) {
-				if (i < new_row.length) {
-					temp[temp.length - 1][i] = new_row[i];
-				}
+			for (int i = 1; i <= new_row.columns(); i++) {
+				m.put(new_row.get(1, i), m.rows(), i);
 			}
-			values = temp;
-		} else {
-			int max = new_row.length;
-			double[][] temp = new double[values.length + 1][max];
-			// Extending original matrix
-			for (int i = 0; i < values.length; i++) {
-				for (int j = 0; j < max; j++) {
-					temp[i][j] = values[i][j];
-				}
-			}
-			// Adding row as usual
-			for (int i = 0; i < temp.length; i++) {
-				temp[temp.length - 1][i] = new_row[i];
-			}
-			values = temp;
+			this.set(Matrix.to_array(m));
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 		return this;
 	}
@@ -453,6 +470,24 @@ public class Matrix {
 		return null;
 	}
 	
+	public Matrix[] horizontal_slice(int[] rows) {
+		// Splits a matrix along some horizontal(s)
+		
+	}
+	
+	public Matrix[] vertical_slice(int[] columns) {
+		// Splits a matrix along some vertical(s)
+		
+	}
+		
+	public Matrix horizontal_stitch(Matrix target) {
+		// Joins two matrices over the horizontal
+	}
+	
+	public Matrix vertical_stitch(Matrix target) {
+		// Joins two matrices over the vertical
+	}
+	
 	public static Matrix cholesky_factorization(Matrix target) {
 		return null;
 	}
@@ -574,6 +609,14 @@ public class Matrix {
 		}
 		double[] row1 = {1, 2, 3, 4, 5, 6};
 		double[] row2 = {19, 20};
+		try {
+			System.out.println(b.append_row(Matrix.to_matrix(row1)));
+			System.out.println(b.append_row(Matrix.to_matrix(row2)));
+			System.out.println(b);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private static void function_tests() {
@@ -605,12 +648,31 @@ public class Matrix {
 			System.out.println(e);
 		}
 		System.out.println(Matrix.identity(5));
-		
+		Matrix m = Matrix.unit(5);
+		Matrix mT = m.transpose();
+		System.out.println(m);
+		double[] ar = Matrix.vector_to_array(m);
+		for (int i = 0; i < ar.length; i++) {
+			System.out.println(ar[i]);
+		}
+		System.out.println(Matrix.vector_to_array(mT)[1]);
+		try {
+			System.out.println(m.times(mT).times(3));
+		} catch (Exception e) {}
 	}
 	
 	public static void main(String[] args) {
 		// constructor_tests();
-		manipulation_tests();
+		// manipulation_tests();
 		// function_tests();
+		double[] array = {1, 6, 2, 7, 3, 7};
+		try {
+			Matrix m = Matrix.to_matrix(array);
+			System.out.println(m);
+			System.out.println(m.transpose());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
